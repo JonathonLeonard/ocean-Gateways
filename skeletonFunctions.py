@@ -1,5 +1,8 @@
 #!/usr/bin/python3
 
+# Functions mainly for creating skeletons that can be used to enforce and conserve ocean gateways and land connections in paleo-elevation maps
+# See makeSkeletons.ipynb for the workflow of implementing this and how to enforce it on maps
+
 import astropy.units
 from fil_finder import FilFinder2D
 import matplotlib.pyplot as plt
@@ -12,7 +15,15 @@ from skimage.morphology import skeletonize, flood_fill
 import sys
 
 def generate_gateway(grid, ocean_or_land='ocean'):
-
+	"""
+	Generated a skeleton from a land-sea mask. There are two modes: one for ocean which skeletonizes ocean values and vice versa for land.
+	Args:
+		grid (string of filepath to netcdf): a netcdf file of 1s and 0s that represent a land sea mask. Preferably needs some processing first to minimise the amount of islands and sea, or the skeleton will be crazy.
+			Note that the variable names of this grid are important and so need to be adjusted if using a netcdf not created with makeSmoothMask()
+		ocean_or_land (string): specify whether land is being skeletonised (all 1s) or ocean (all 0s)
+	Returns:
+		filename of the netcdf grid that contains the skeleton 
+	"""
 	outname = f'skeleton_{ocean_or_land}_{grid}'
 	if os.path.exists(outname):
 		os.remove(outname)
@@ -149,8 +160,14 @@ def generate_gateway(grid, ocean_or_land='ocean'):
 
 def makeSmoothMask(grid):
 	"""
-	Takes a netCDF grid of elevations and produces a smoothed landsea mask
-	Use for making skeletons
+	Takes a netCDF grid of elevations and produces a smoothed landsea mask suitable for skeletonising 
+	Use for making skeletons with generateGateway() above.
+	Note that despite the function's name, this doesn't really smooth the land-sea mask. Just filters out islands, small seas and fixes diagonal land connections
+	Args:
+		grid (string of filepath to netcdf): grid of elevations. Try make this a copy of the original grid as the function alters this grid
+	Returns:
+		grid: the filepath to the above grid that now includes the processed land sea mask
+
 	"""
 
 	# Open the netCDF file
@@ -185,10 +202,6 @@ def makeSmoothMask(grid):
 	nosea_noisland_smoothed_grid_data[nosea_noisland_smoothed_grid_data == 0] = 1
 	nosea_noisland_smoothed_grid_data[nosea_noisland_smoothed_grid_data == 999] = 0
 
-	# plt.matshow(grid_data)
-	# plt.matshow(nosea_noisland_smoothed_grid_data)
-	# sys.exit()
-
 	# Create a new variable in the dataset to store the 'skel' array
 	var = dataset.createVariable('landsea_smoothed_nosea_noisland', 'i4', dataset.variables['z'].dimensions)
 
@@ -208,7 +221,11 @@ def makeSmoothMask(grid):
 	return grid
 
 def remove_inland_seas(grid, minimum_sea_size):
-	"""Uses a flood fill algorithm to identify unique bodies of water and removes any below the min waterbody size (set in config)"""
+	"""
+	Uses a flood fill algorithm to identify unique bodies of water and removes any below the min waterbody size (set in config).
+	Args:
+		grid (numpy.ndarray): land sea mask of 0s and 1s
+	"""
 	grid = grid.astype(int) # Make every value an integer
 
 	print(f'Identifying unique bodies of water')

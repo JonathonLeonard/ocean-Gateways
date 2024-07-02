@@ -1,0 +1,14 @@
+name: makeSkeletons
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10.14  
+  - astropy=5.3.4
+  - imageio=2.34.0
+  - netcdf4=1.6.5
+  - pygmt=0.11.0
+  - scikit-image=0.22.0
+  - xarray=2024.2.0
+  - pip
+  - pip:
+    - fil-finder
