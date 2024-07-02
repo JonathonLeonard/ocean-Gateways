@@ -2,7 +2,7 @@
 
 Paleoclimate models often require the use of low resolution boundary conditions to facilitate the high computational costs of modelling. This can create problems when coarsening elevation maps from high to low resolution. When this is done, land and sea connections can be inadvertently created or lost. For example, the Panama Isthmus is a thin strip of land that connects North and South America. If an elevation map is coarsened by taking the mean or median of the elevations, the resulting map will not have a land bridge between North and South America. 
 
-![skeletonImplementation](https://github.com/JonathonLeonard/ocean-Gateways/blob3c60b4bf007917190fdf9729bed85c55707cfff7/skeletenImplementation.png)
+![skeletonImplementation](https://github.com/JonathonLeonard/ocean-Gateways/blob/418083944dfd52318b28990a3ebdbededca260b7/data/skeletenImplementation.png)
 
 Ocean gateways and landbridges have been shown to have a large influence on climate and oceans, therefore we need to do our best to preserve key ocean and land connections. For present day elevation maps, or paleoelevations of a single age snapshot, this can be done manually. However, for paleoclimate modelling over long time series, this can become burdensome. 
 
